@@ -175,6 +175,8 @@ class AuthService(val api: AuthAPI) : AuthProvider {
                 when (response) {
                     is ApiResult.Error -> emit(Response.Error(response.detail))
                     is ApiResult.Success -> {
+                        stateFlow.update { AuthState.Updated(customerResponse.customer!!) }
+
                         save(
                             AuthData(
                                 customer = Customer(
