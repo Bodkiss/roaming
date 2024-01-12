@@ -1,0 +1,18 @@
+<resources>
+    <style name="AppTheme" parent="Theme.Material3.Light.NoActionBar">
+        <!-- Primary and secondary colors -->
+        <item name="colorPrimary">@color/blue400</item>
+        <item name="colorSecondary">@color/violet500</item>
+        <item name="colorPrimaryVariant">@color/blue500</item>
+        <item name="colorSecondaryVariant">@color/violet600</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <!-- Background and surface colors -->
+        <item name="android:colorBackground">@color/gray800</item>
+        <item name="colorSurface">@color/gray400</item>
+        <item name="colorOnSurface">@color/gray50</item>
+
+        <item name="android:statusBarColor">@color/gray400</item>
+    </style>
+</resources>
