@@ -262,7 +262,7 @@ fun App() {
                                     }
                                     scene(AppRoute.PROFILE_UPDATE) {
                                         setTitle("Update Profile")
-                                        UpdateProfileScreen()
+                                        UpdateProfileScreen(navigator)
                                     }
                                 }
                             }

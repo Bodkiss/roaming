@@ -29,4 +29,12 @@ interface AuthProvider {
     fun resetPassword(id: String, password: String, confirmation: String): Flow<Response<Boolean>>
 
     fun forgetPassword(email: String): Flow<Response<Boolean>>
+
+    fun editDetails(
+        email: String,
+        password: String,
+        firstName: String = "",
+        lastName: String = "",
+        phoneNumber: String? = null
+    ): Flow<Response<CustomerRegister.Response>>
 }

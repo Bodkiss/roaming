@@ -23,6 +23,7 @@ class AuthService(val api: AuthAPI) : AuthProvider {
 
     private val stateFlow = MutableStateFlow<AuthState>(AuthState.Unauthenticated)
 
+
     init {
         try {
             val json = SharedStorage.secureLoad(authDateKey, "")
@@ -149,6 +150,55 @@ class AuthService(val api: AuthAPI) : AuthProvider {
 
     override fun forgetPassword(email: String): Flow<Response<Boolean>> {
         TODO("Not yet implemented")
+    }
+
+    override fun editDetails(email: String, password: String, firstName: String, lastName: String, phoneNumber: String?): Flow<Response<CustomerRegister.Response>> {
+        return flow {
+            try {
+                emit(Response.Loading)
+                val json = SharedStorage.secureLoad(authDateKey, "")
+
+                val customerResponse = Json.decodeFromString(AuthData.serializer(), json)
+
+                val response = api.editeDetails(
+
+                    CustomerRegister(
+                        id = customerResponse.customer?.id,
+                        email = email,
+                        firstName = firstName,
+                        lastName = lastName,
+                        fullName = "$firstName $lastName",
+                        phoneNumber = phoneNumber,
+                        password = password
+                    )
+                )
+                when (response) {
+                    is ApiResult.Error -> emit(Response.Error(response.detail))
+                    is ApiResult.Success -> {
+                        save(
+                            AuthData(
+                                customer = Customer(
+                                    id = response.data.id,
+                                    email = response.data.email,
+                                    firstName = firstName,
+                                    lastName = lastName,
+                                    fullName = "$firstName $lastName",
+                                    phoneNumber = phoneNumber,
+                                )
+                            )
+                        )
+
+                        emit(
+                            Response.Success(
+                                response.data
+                            )
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                emit(Response.Error(e.message))
+            }
+        }
     }
 
 }

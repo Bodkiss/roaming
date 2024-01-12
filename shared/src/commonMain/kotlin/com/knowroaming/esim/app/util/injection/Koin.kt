@@ -77,6 +77,7 @@ val commonModule = module {
             when (it) {
                 is AuthState.Registered -> it.user
                 is AuthState.Authenticated -> it.user
+                is AuthState.Updated -> it.user
                 AuthState.Unauthenticated -> null
             }
         }

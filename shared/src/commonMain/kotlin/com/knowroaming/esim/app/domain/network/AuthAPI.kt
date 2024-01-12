@@ -7,6 +7,7 @@ import com.knowroaming.esim.app.domain.data.CustomerSignIn
 import com.knowroaming.esim.app.util.ApiResult
 import de.jensklingenberg.ktorfit.http.Body
 import de.jensklingenberg.ktorfit.http.Headers
+import de.jensklingenberg.ktorfit.http.PATCH
 import de.jensklingenberg.ktorfit.http.POST
 
 
@@ -27,4 +28,8 @@ interface AuthAPI {
     @POST("customer_forgot_password/")
     @Headers("Accept: application/json", "Content-Type: application/json")
     suspend fun forgetPassword(@Body data: CustomerForgetPassword)
+
+    @PATCH("customer_edit_details/")
+    @Headers("Accept: application/json", "Content-Type: application/json")
+    suspend fun editeDetails(@Body data: CustomerRegister): ApiResult<CustomerRegister.Response>
 }

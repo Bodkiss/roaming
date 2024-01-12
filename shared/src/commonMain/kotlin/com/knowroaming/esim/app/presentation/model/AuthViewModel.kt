@@ -24,6 +24,7 @@ class AuthViewModel(
             return@map when (it) {
                 is AuthState.Registered -> it
                 is AuthState.Authenticated -> it
+                is AuthState.Updated -> it
                 else -> null
             }
         }
@@ -139,6 +140,53 @@ class AuthViewModel(
 
     fun logout() {
         provider.logout()
+    }
+
+
+    fun editDetails(
+        email: String,
+        password: String,
+        firstName: String = "",
+        lastName: String = "",
+        phoneNumber: String? = null
+    ) {
+        viewModelScope.launch {
+            provider.editDetails(email, password, firstName, lastName, phoneNumber)
+                .collect { response ->
+                    when (response) {
+                        is Response.Error -> {
+                            event.update { Event.Failure(response.message) }
+                            delay(1000)
+                            event.update { Event.Completed }
+                        }
+
+                        is Response.Success -> response.data.let { registration ->
+                            if (registration.success == true) {
+                                val customer = Customer(
+                                    id = registration.id,
+                                    email = registration.email,
+                                    firstName = firstName,
+                                    lastName = lastName,
+                                    phoneNumber = phoneNumber,
+                                    fullName = "$firstName $lastName",
+                                )
+
+                                provider.update(
+                                    AuthState.Updated(
+                                        customer
+                                    )
+                                )
+
+
+                            }
+
+                            event.update { Event.Completed }
+                        }
+
+                        is Response.Loading -> event.update { Event.Loading }
+                    }
+                }
+        }
     }
 }
 
