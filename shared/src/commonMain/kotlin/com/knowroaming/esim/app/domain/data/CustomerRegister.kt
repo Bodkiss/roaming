@@ -1,5 +1,6 @@
 package com.knowroaming.esim.app.domain.data
 
+import com.knowroaming.esim.app.domain.model.Customer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -35,4 +36,16 @@ data class CustomerRegister(
         val referralCode: String? = null,
         val updated: Boolean? = null,
     )
+}
+
+fun CustomerRegister.Response.toCustomer(phoneNumber: String?, firstName: String, lastName: String): Customer {
+    return Customer(
+        id = this.id,
+        email = this.email,
+        phoneNumber = phoneNumber,
+        firstName = firstName,
+        lastName = lastName,
+        fullName = "$firstName $lastName",
+
+        )
 }

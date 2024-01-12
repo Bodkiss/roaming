@@ -1,5 +1,6 @@
 package com.knowroaming.esim.app.presentation.model
 
+import com.knowroaming.esim.app.domain.data.toCustomer
 import com.knowroaming.esim.app.domain.model.Customer
 import com.knowroaming.esim.app.domain.repository.AuthProvider
 import com.knowroaming.esim.app.domain.service.AuthState
@@ -94,14 +95,8 @@ class AuthViewModel(
 
                         is Response.Success -> response.data.let { registration ->
                             if (registration.success == true) {
-                                val customer = Customer(
-                                    id = registration.id,
-                                    email = registration.email,
-                                    firstName = firstName,
-                                    lastName = lastName,
-                                    phoneNumber = phoneNumber,
-                                    fullName = "$firstName $lastName",
-                                )
+
+                                val customer = registration.toCustomer(phoneNumber, firstName, lastName)
 
                                 provider.update(
                                     AuthState.Registered(

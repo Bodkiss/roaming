@@ -3,6 +3,7 @@ package com.knowroaming.esim.app.domain.service
 import com.knowroaming.esim.app.domain.data.AuthData
 import com.knowroaming.esim.app.domain.data.CustomerRegister
 import com.knowroaming.esim.app.domain.data.CustomerSignIn
+import com.knowroaming.esim.app.domain.data.toCustomer
 import com.knowroaming.esim.app.domain.model.Customer
 import com.knowroaming.esim.app.domain.network.AuthAPI
 import com.knowroaming.esim.app.domain.repository.AuthProvider
@@ -175,7 +176,12 @@ class AuthService(val api: AuthAPI) : AuthProvider {
                 when (response) {
                     is ApiResult.Error -> emit(Response.Error(response.detail))
                     is ApiResult.Success -> {
-                        stateFlow.update { AuthState.Updated(customerResponse.customer!!) }
+
+                        stateFlow.update {
+                            AuthState.Updated(
+                                response.data.toCustomer(phoneNumber, firstName, lastName)
+                            )
+                        }
 
                         save(
                             AuthData(

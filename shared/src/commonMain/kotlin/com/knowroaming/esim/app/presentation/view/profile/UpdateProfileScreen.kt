@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import com.knowroaming.esim.app.domain.data.AuthData
 import com.knowroaming.esim.app.domain.model.Customer
 import com.knowroaming.esim.app.domain.service.AuthState
 import com.knowroaming.esim.app.presentation.components.button.AppButton
@@ -35,10 +36,12 @@ import com.knowroaming.esim.app.presentation.components.input.AppTextField
 import com.knowroaming.esim.app.presentation.model.AuthViewModel
 import com.knowroaming.esim.app.presentation.theme.BrandSize
 import com.knowroaming.esim.app.presentation.view.auth.SignUpScreenState
+import com.knowroaming.esim.app.util.SharedStorage
 import com.knowroaming.esim.app.util.ext.isPhoneNumberChar
 import com.knowroaming.esim.app.util.injection.AppKoin
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
 import org.koin.compose.koinInject
@@ -63,6 +66,7 @@ fun UpdateProfileScreen(navigator:Navigator) {
     val customer by koinInject<Flow<Customer?>>(named(AppKoin.AUTH_USER)).collectAsState(null)
 
     val (state, setState) = remember {
+
         mutableStateOf(
             SignUpScreenState(
                 email = customer?.email ?: "",
@@ -74,14 +78,34 @@ fun UpdateProfileScreen(navigator:Navigator) {
     }
 
     LaunchedEffect(auth) {
-        println("UpdateProfileScreen auth $auth")
+
+        val user = when (auth) {
+            is AuthState.Registered -> (auth as AuthState.Registered).user
+            is AuthState.Authenticated -> (auth as AuthState.Authenticated).user
+            is AuthState.Updated -> (auth as AuthState.Updated).user
+            else -> null
+        }
+
+        user?.let {
+            setState(
+                state.copy(
+                    email = it.email ?: "",
+                    firstName = it.firstName ?: "",
+                    lastName = it.lastName ?: "",
+                    phoneNumber = it.phoneNumber ?: "",
+                )
+            )
+        }
+
         when (auth) {
             is AuthState.Updated -> {
                 snackbar.showSnackbar("Updated Successful")
                 navigator.goBack()
             }
 
-            else -> {}
+
+            else -> {
+            }
         }
     }
 
